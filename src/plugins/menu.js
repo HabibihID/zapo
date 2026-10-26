@@ -8,13 +8,18 @@ export const menuPlugin = {
   async handler(ctx) {
     return ctx.reply(
       [
-        '*HABI Zapo — Menu v1.1.0*',
+        '*HABI Zapo — Menu v1.2.0*',
         '',
         'Perintah yang sudah aktif di Zapo:',
         `• ${ctx.prefix}ping — cek bot hidup`,
+        `• ${ctx.prefix}menu — daftar ini`,
+        `• ${ctx.prefix}peraturan — peraturan bot`,
+        `• ${ctx.prefix}donasi — donasi (DANA / QRIS)`,
+        `• ${ctx.prefix}sc — info script`,
+        `• ${ctx.prefix}tqto — thanks to`,
+        `• ${ctx.prefix}runtime — lama bot aktif`,
         `• ${ctx.prefix}delpanel <id> — hapus server panel (owner)`,
         `• ${ctx.prefix}upswgc <teks> — posting status foto/video/teks (owner, di grup)`,
-        `• ${ctx.prefix}menu — daftar ini`,
         '',
         'Port penuh 549 plugin Baileys menyusul per kategori; bot Baileys tetap jalan sampai cutover.',
       ].join('\n'),

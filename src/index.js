@@ -5,9 +5,9 @@
 //            dengan BOT_NUMBER=62812... -> kode pairing 8 karakter.
 // Sesi tersimpan di SQLite (.auth/state.sqlite) — pairing cukup sekali.
 // Auto-follow saluran jalan tiap connect (config/channels.json / HABI_CHANNELS).
-// Demo router: balas 'ping' -> 'pong' (penanda hidup, diganti router HABI
-// penuh saat migrasi). Bot HABI yang jalan saat ini TETAP memakai Baileys
-// sampai user menyuruh pindah — proyek ini hanya disiapkan dulu.
+// Router v1.1.0: .ping .menu .delpanel .upswgc + saran typo + tap tombol
+// Native Flow. Bot HABI yang jalan saat ini TETAP memakai Baileys
+// sampai cutover penuh — proyek ini disiapkan & diuji bertahap.
 //
 // Mode kering (tanpa koneksi WA, untuk tes):
 //   HABI_ZAPO_DRY_RUN=1 npm start
@@ -22,6 +22,11 @@ import { resolveBotIdentity, formatIdentityCard } from './lib/identity.js';
 import { autoFollowChannels } from './lib/autofollow.js';
 import { buildQuickReplyMessage, sendNativeFlow } from './lib/nativeflow.js';
 import { config, loadChannels } from './config.js';
+import { createRouter } from './lib/router.js';
+import { pingPlugin } from './plugins/ping.js';
+import { menuPlugin } from './plugins/menu.js';
+import { delpanelPlugin } from './plugins/delpanel.js';
+import { upswgcPlugin } from './plugins/upswgc.js';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -158,7 +163,7 @@ async function main() {
           if (r.status === 'failed') warn(`  gagal saluran ke-${i + 1}: ${hideIds(r.error)}`);
         });
       }
-      ok('Bot siap. Demo router aktif: kirim "ping" -> dibalas "pong".');
+      ok('Bot siap. Router Zapo aktif: .ping .menu .delpanel .upswgc (tap tombol = perintah).');
       return;
     }
     if (event.status === 'close') {
@@ -175,24 +180,19 @@ async function main() {
     }
   });
 
-  // Demo router — penanda hidup. Router HABI penuh dipasang saat migrasi.
+  // Router HABI penuh (v1.1.0): perintah teks + tap tombol Native Flow.
+  // Plugin baru didaftarkan di array ini; tiap plugin = { commands, handler }.
+  const router = createRouter({
+    plugins: [pingPlugin, menuPlugin, delpanelPlugin, upswgcPlugin],
+    config,
+    log: (line) => console.log(`  ${line}`),
+  });
+
   client.on('message', async (event) => {
     try {
-      const text = event.message?.conversation
-        ?? event.message?.extendedTextMessage?.text
-        ?? '';
-      if (text.trim().toLowerCase() !== 'ping') return;
-      // 'pong' bukan 'ping', jadi tidak ada loop balas-membalas.
-      await sendNativeFlow(client, event.key.remoteJid, buildQuickReplyMessage({
-        body: 'pong! HABI Zapo hidup.',
-        footer: '© 2026 Habibih Cloud Official ID',
-        buttons: [
-          { id: 'menu', title: 'Menu' },
-          { id: 'ping', title: 'Ping lagi' },
-        ],
-      }));
+      await router.handleMessage({ client, event });
     } catch (err) {
-      warn(`Demo router gagal: ${err.message}`);
+      warn(`Router gagal: ${err.message}`);
     }
   });
 

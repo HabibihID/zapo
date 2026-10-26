@@ -50,4 +50,10 @@ export const config = {
     domain: (process.env.PANEL_DOMAIN || '').replace(/\/+$/, ''),
     apiKey: process.env.PANEL_API_KEY || '',
   },
+  // Donasi (untuk .donasi dana). Nomor DANA TIDAK PERNAH ditulis di repo —
+  // isi lewat env di server; kosong = balasan "Belum dikonfigurasi".
+  donation: {
+    danaNumber: (process.env.HABI_DANA_NUMBER || '').replace(/\s+/g, ''),
+    danaName: process.env.HABI_DANA_NAME || 'Habibih Harahap',
+  },
 };

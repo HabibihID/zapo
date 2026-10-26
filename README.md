@@ -35,6 +35,8 @@ HABI_ZAPO_DRY_RUN=1 npm start    # demo tanpa koneksi WA (tes modul)
 
 `config/channels.json` — isi dengan link/kode invite/JID saluran, contoh di `config/channels.example.json`. Kosong = auto-follow dilewati (bukan error).
 
+Privasi: repo publik sengaja dikirim dengan `config/channels.json` kosong. Daftar saluran asli JANGAN PERNAH di-commit — isi lewat env `HABI_CHANNELS` di server pribadi. Log juga tidak pernah menampilkan JID/link/kode saluran, hanya jumlah dan status.
+
 ## Demo router
 
 Saat ini hanya router demo: kirim `ping` → dibalas `pong` + tombol Native Flow (penanda hidup). Router HABI penuh (540 plugin) dipasang saat migrasi, BUKAN sekarang.

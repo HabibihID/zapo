@@ -114,6 +114,40 @@ export function buildCtaUrlMessage({ body, footer, headerText, buttons }) {
   });
 }
 
+// Pesan campuran: quick_reply + cta_url dalam SATU pesan (seperti
+// sendInteractive Baileys yang menggabungkan tombol biasa + tombol URL).
+// Dipakai mis. .sc: [Store (url)] [Menu (quick_reply)] [Owner (url)].
+export function buildMixedMessage({ body, footer, headerText, buttons }) {
+  needText(body, 'body');
+  if (!Array.isArray(buttons) || buttons.length === 0 || buttons.length > 3) {
+    throw new Error('buttons wajib array 1..3 tombol');
+  }
+  const native = buttons.map((b) => {
+    if (b?.kind === 'cta_url') {
+      needText(b?.title, 'button.title');
+      if (typeof b?.url !== 'string' || !/^https?:\/\//.test(b.url)) {
+        throw new Error('button.url wajib URL http(s)');
+      }
+      return {
+        name: 'cta_url',
+        buttonParamsJson: JSON.stringify({ display_text: b.title, url: b.url }),
+      };
+    }
+    needText(b?.id, 'button.id');
+    needText(b?.title, 'button.title');
+    return {
+      name: 'quick_reply',
+      buttonParamsJson: JSON.stringify({ display_text: b.title, id: b.id }),
+    };
+  });
+  return interactiveMessage({
+    body,
+    footer,
+    headerText,
+    nativeFlowMessage: { buttons: native, messageVersion: 1 },
+  });
+}
+
 // Kirim pesan native flow lewat client Zapo. Validasi bentuk dulu supaya
 // kesalahan ketahuan sebelum kena jaringan.
 export async function sendNativeFlow(client, to, message, options) {

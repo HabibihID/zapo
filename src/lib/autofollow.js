@@ -63,7 +63,7 @@ export async function autoFollowChannels(client, inputs, { log = () => {} } = {}
       await client.newsletter.follow(jid);
       followed.add(jid);
       results.push({ input, jid, name, status: 'followed' });
-      log(`followed ${name ?? jid}`);
+      log('saluran diikuti');
     } catch (err) {
       results.push({ input, status: 'failed', error: err?.message ?? String(err) });
     }

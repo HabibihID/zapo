@@ -18,7 +18,7 @@
 // Log: nomor dimask (6 digit pertama + "..."), nama dipotong — tidak ada
 // JID/link di log, mengikuti aturan privasi saluran.
 
-import { buildQuickReplyMessage, parseInteractiveResponse, sendNativeFlow } from './nativeflow.js';
+import { buildQuickReplyMessage, buildCtaUrlMessage, buildMixedMessage, parseInteractiveResponse, sendNativeFlow } from './nativeflow.js';
 import { findBestCommandMatch, sendTypoSuggestion } from './typo.js';
 
 export function digitsOf(jid) {
@@ -120,10 +120,19 @@ export function createRouter({ plugins, config, log = () => {} }) {
       prefix: config.prefix,
       config,
       isOwner: () => config.ownerNumbers.includes(digitsOf(sender)),
+      pluginCount: plugins.length,
       reply: (t) => client.message.send(chat, { conversation: t }),
       replyButtons: (body, footer, buttons) => {
         log(`[Native Flow] kirim quick_reply: ${buttons.map((b) => `"${b.title}"`).join(', ')}`);
         return sendNativeFlow(client, chat, buildQuickReplyMessage({ body, footer, buttons }));
+      },
+      replyUrlButtons: (body, footer, buttons) => {
+        log(`[Native Flow] kirim cta_url: ${buttons.map((b) => `"${b.title}"`).join(', ')}`);
+        return sendNativeFlow(client, chat, buildCtaUrlMessage({ body, footer, buttons }));
+      },
+      replyMixed: (body, footer, buttons) => {
+        log(`[Native Flow] kirim campuran: ${buttons.map((b) => `"${b.title}"`).join(', ')}`);
+        return sendNativeFlow(client, chat, buildMixedMessage({ body, footer, buttons }));
       },
     };
 

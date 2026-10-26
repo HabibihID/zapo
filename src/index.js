@@ -146,12 +146,17 @@ async function main() {
         const stop = spinner(`Auto-follow ${channels.length} saluran`);
         const results = await autoFollowChannels(client, channels, { log: () => {} });
         stop(`Auto-follow selesai (${results.filter((r) => r.status !== 'failed').length}/${results.length} OK)`);
+        // Privasi: log TIDAK PERNAH menampilkan JID/link/kode saluran.
+        const hideIds = (s) => String(s ?? '')
+          .replace(/\d{10,}@newsletter/g, '[saluran]')
+          .replace(/whatsapp\.com\/channel\/[A-Za-z0-9_-]+/g, '[saluran]')
+          .replace(/0029[A-Za-z0-9_-]+/g, '[saluran]');
         results.forEach((r, i) => {
-          progressBar(i + 1, results.length, r.status === 'failed' ? `gagal: ${r.input}` : `${r.status} ${r.name ?? r.jid ?? r.input}`);
+          progressBar(i + 1, results.length, r.status);
         });
-        for (const r of results.filter((r) => r.status === 'failed')) {
-          warn(`  gagal ${r.input}: ${r.error}`);
-        }
+        results.forEach((r, i) => {
+          if (r.status === 'failed') warn(`  gagal saluran ke-${i + 1}: ${hideIds(r.error)}`);
+        });
       }
       ok('Bot siap. Demo router aktif: kirim "ping" -> dibalas "pong".');
       return;

@@ -25,6 +25,11 @@ import { config, loadChannels } from './config.js';
 import { createRouter } from './lib/router.js';
 import { pingPlugin } from './plugins/ping.js';
 import { menuPlugin } from './plugins/menu.js';
+import { peraturanPlugin } from './plugins/peraturan.js';
+import { donasiPlugin } from './plugins/donasi.js';
+import { scPlugin } from './plugins/sc.js';
+import { tqtoPlugin } from './plugins/tqto.js';
+import { runtimePlugin } from './plugins/runtime.js';
 import { delpanelPlugin } from './plugins/delpanel.js';
 import { upswgcPlugin } from './plugins/upswgc.js';
 
@@ -163,7 +168,7 @@ async function main() {
           if (r.status === 'failed') warn(`  gagal saluran ke-${i + 1}: ${hideIds(r.error)}`);
         });
       }
-      ok('Bot siap. Router Zapo aktif: .ping .menu .delpanel .upswgc (tap tombol = perintah).');
+      ok('Bot siap. Router Zapo aktif: .ping .menu .peraturan .donasi .sc .tqto .runtime .delpanel .upswgc (tap tombol = perintah).');
       return;
     }
     if (event.status === 'close') {
@@ -180,10 +185,10 @@ async function main() {
     }
   });
 
-  // Router HABI penuh (v1.1.0): perintah teks + tap tombol Native Flow.
+  // Router HABI (v1.2.0): perintah teks + tap tombol Native Flow.
   // Plugin baru didaftarkan di array ini; tiap plugin = { commands, handler }.
   const router = createRouter({
-    plugins: [pingPlugin, menuPlugin, delpanelPlugin, upswgcPlugin],
+    plugins: [pingPlugin, menuPlugin, peraturanPlugin, donasiPlugin, scPlugin, tqtoPlugin, runtimePlugin, delpanelPlugin, upswgcPlugin],
     config,
     log: (line) => console.log(`  ${line}`),
   });

@@ -34,4 +34,20 @@ export const config = {
   // Juga dipakai resolveBotIdentity saat meJid berbentuk LID.
   botNumber: (process.env.BOT_NUMBER ?? '').replace(/\D/g, '') || null,
   dryRun: process.env.HABI_ZAPO_DRY_RUN === '1',
+  // Konfigurasi bot (setara config/settings.js Baileys, tapi lewat env —
+  // TIDAK ADA kunci/API key yang ditulis di repo ini).
+  prefix: process.env.HABI_PREFIX || '.',
+  botName: process.env.HABI_BOT_NAME || 'HABI AI',
+  // Nomor owner (digit saja, pisah koma). Default = nomor admin publik
+  // Habibi Store (sudah tercantum di source Baileys & halaman toko).
+  ownerNumbers: (process.env.HABI_OWNER_NUMBERS || '6285181576338')
+    .split(',')
+    .map((s) => s.replace(/\D/g, ''))
+    .filter(Boolean),
+  // Panel Pterodactyl (untuk .delpanel dkk). WAJIB diisi lewat env di panel;
+  // kosong = plugin panel menolak dengan pesan jelas (bukan error samar).
+  panel: {
+    domain: (process.env.PANEL_DOMAIN || '').replace(/\/+$/, ''),
+    apiKey: process.env.PANEL_API_KEY || '',
+  },
 };

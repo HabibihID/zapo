@@ -2,10 +2,12 @@
 
 Core bot HABI berbasis **Zapo** (`zapo-js` v1.10, implementasi protokol WhatsApp Web dari nol — bukan fork Baileys).
 
-> **STATUS v1.1.0: KONFIGURASI + ROUTER AKTIF, MIGRASI BERTAHAP.**
+> **STATUS v1.2.0: KONFIGURASI + ROUTER + KATEGORI MAIN AKTIF, MIGRASI BERTAHAP.**
 > Bot HABI yang jalan saat ini tetap memakai Baileys sampai cutover penuh.
 > Migrasi ke Zapo DIPERINTAHKAN user 2026-10-26: konfigurasi sekarang, fix
 > semua button, audit semua kode, tes per command sampai nol error.
+> Dibangun sebagai percobaan terpisah — Baileys tidak diutak-atik, jadi
+> kalau nanti tidak sesuai, Zapo tinggal dihapus tanpa mengganggu bot live.
 
 ## Yang sudah jadi
 
@@ -16,6 +18,8 @@ Core bot HABI berbasis **Zapo** (`zapo-js` v1.10, implementasi protokol WhatsApp
 - **Animasi konsol** (`src/lib/anim.js`, tanpa dependensi): banner + spinner + progress bar. Jalan otomatis saat `npm install` (postinstall) dan `npm start`.
 - **Router perintah v1.1.0** (`src/lib/router.js`): perintah teks + caption media + **tap tombol Native Flow** (isi tombol = perintah; tap `.delpanel 13` sama dengan mengetiknya). Command tak dikenal → saran typo (mesin skor port Baileys, `src/lib/typo.js`) dengan tombol yang **membawa argumen** (fix bug Baileys: dulu argumen hilang saat tombol ditekan). Log menampilkan kiriman & tap Native Flow (jenis + judul tombol); nomor dimask, tanpa JID di log.
 - **Plugin v1.1.0** (`src/plugins/`): `.ping`, `.menu`, `.delpanel` (panel Pterodactyl, `src/lib/panel.js` — error membawa status + detail panel; 404 = ID tidak ada, cek `.listserver`), `.upswgc` (lihat catatan di bawah).
+- **Batch 1 kategori main v1.2.0**: `.peraturan`, `.donasi` (DANA via env, QRIS menyusul aset), `.sc` (hitung plugin Zapo asli, tombol campuran url + quick_reply), `.tqto`, `.runtime`. Gambar rules/donasi Baileys belum dipindah — port batch ini teks + tombol dulu.
+- **Pesan campuran** (`buildMixedMessage` di `nativeflow.js`): quick_reply + cta_url dalam satu pesan, seperti `sendInteractive` Baileys.
 - **Penempatan tombol**: tombol quick_reply/single_select/cta_url selalu berada **di bawah isi pesan** (body + footer) dalam satu pesan InteractiveMessage. Tidak ada lagi tombol legacy `buttonsMessage` — semua tombol lewat Native Flow.
 
 ## .upswgc di Zapo (foto/video) — perbedaan jujur vs Baileys
@@ -28,7 +32,7 @@ Core bot HABI berbasis **Zapo** (`zapo-js` v1.10, implementasi protokol WhatsApp
 
 ```bash
 npm install        # animasi postinstall jalan otomatis
-npm test           # unit test (identitas, native flow, auto-follow, router, panel, typo, delpanel, upswgc)
+npm test           # unit test (identitas, native flow, auto-follow, router, panel, typo, delpanel, upswgc, main)
 npm start          # pairing QR di terminal
 BOT_NUMBER=62812xxxx npm start   # pairing pakai kode 8 karakter
 HABI_ZAPO_DRY_RUN=1 npm start    # demo tanpa koneksi WA (tes modul)
@@ -56,7 +60,7 @@ Privasi: repo publik sengaja dikirim dengan `config/channels.json` kosong. Dafta
 ## Status tes (jujur)
 
 Terverifikasi (otomatis, tanpa jaringan):
-- Unit test **42/42 lolos** (identitas, native flow, auto-follow, router per command, panel, typo, delpanel, upswgc teks/foto/video).
+- Unit test **47/47 lolos** (identitas, native flow, auto-follow, router per command, panel, typo, delpanel, upswgc teks/foto/video, main batch 1).
 - Dry run (`HABI_ZAPO_DRY_RUN=1`) + animasi postinstall jalan.
 - `npm start` membuat store SQLite dan mencoba soket WA.
 
